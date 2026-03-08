@@ -13,10 +13,10 @@ const router  = express.Router();
 
 // validation middleware
 const registerValidation = [
-    body('name')
+    body('username')
     .trim()
     .isLength({ min: 3 })
-    .withMessage('Name must be at least 3 characters long'),
+    .withMessage('Username must be at least 3 characters long'),
     body('email')
     .isEmail()
     .normalizeEmail()
