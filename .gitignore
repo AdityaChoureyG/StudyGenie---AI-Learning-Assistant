@@ -6,4 +6,4 @@ backend/node_modules/
 backend/.env
 frontend/ai-learning-assistant/.env
 tempstamp.txt
-.uploads/
+uploads/documents/

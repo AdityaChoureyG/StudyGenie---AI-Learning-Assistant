@@ -1,4 +1,4 @@
-import Flashcard from "../models/Flashcard";
+import Flashcard from "../models/Flashcard.js";
 
 // @desc get all flashcards for a document
 // @route GET /api/flashcards/:documentId
@@ -6,9 +6,10 @@ import Flashcard from "../models/Flashcard";
 export const getFlashcards = async (req, res, next) => {
     try{
         const flashcards = await Flashcard.find({ 
-            document: req.params.documentId, user: req.user._id
+            documentId: req.params.documentId,
+            userId: req.user._id
         })
-            .populate('document', 'title') // populate document title
+            .populate('documentId', 'title') // populate document title
             .sort({ createdAt: -1 }); // sort by newest first
 
         res.status(200).json({  
@@ -27,8 +28,8 @@ export const getFlashcards = async (req, res, next) => {
 // @access Private
 export const getAllFlashcardSets = async (req, res, next) => {
     try{
-        const flashcardSets = await Flashcard.find({ user: req.user._id })
-            .populate('document', 'title') // populate document title
+        const flashcardSets = await Flashcard.find({ userId: req.user._id })
+            .populate('documentId', 'title') // populate document title
             .sort({ createdAt: -1 }); // sort by newest first
 
         res.status(200).json({
@@ -89,7 +90,7 @@ export const reviewFlashcard = async (req, res, next) => {
 // @desc toggle star a flashcard
 // @route PUT /api/flashcards/:cardId/star
 // @access Private
-export const toggleStarFlashcard = async (req, res, next) => {
+export const    toggleStarFlashcard = async (req, res, next) => {
     try{
         const flashcardSet = await Flashcard.findOne({ 
             'cards._id': req.params.cardId, userId: req.user._id
@@ -114,7 +115,11 @@ export const toggleStarFlashcard = async (req, res, next) => {
         }
 
         // Toggle star
+        // console.log('Before toggling star:', flashcardSet.cards[cardIndex].isStarred);
         flashcardSet.cards[cardIndex].isStarred = !flashcardSet.cards[cardIndex].isStarred;
+        // console.log('After toggling star:', flashcardSet.cards[cardIndex].isStarred);
+
+        await flashcardSet.save();
 
         res.status(200).json({
             success: true,
