@@ -11,6 +11,7 @@ import authRoutes from './routes/authRoutes.js';
 import documentRoutes from './routes/documentRoutes.js';
 import flashcardRoutes from './routes/flashcardRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
+import progressRoutes from './routes/progressRoutes.js'
 
 // ES6 module syntax requires this to get the __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -43,6 +44,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/flashcards', flashcardRoutes);
 app.use('/api/ai', aiRoutes);
+app.use('/api/progress', progressRoutes);
 
 
 app.use(errorHandler);
