@@ -31,7 +31,7 @@ const LoginPage = () => {
       toast.error(err.message || 'Failed to login');
     }
     finally{
-      setLoading()
+      setLoading(false)
     }
   }
 
