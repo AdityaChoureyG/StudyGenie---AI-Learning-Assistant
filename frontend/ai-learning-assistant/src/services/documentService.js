@@ -3,7 +3,7 @@ import { API_PATHS } from "../utils/apiPath";
 
 const getDocuments = async () => {
     try{
-        const response = await axiosInstance.get(API_PATHS.DOCUMENTS.getDocuments);
+        const response = await axiosInstance.get(API_PATHS.DOCUMENTS.GET_DOCUMENTS);
         return response.data;
     } catch(error){
         throw error.response?.data || {message : "Failed to fetch data"};
