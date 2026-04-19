@@ -1,6 +1,5 @@
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPath";
-import { connect } from "mongoose";
 
 const generateFlashcards = async (documentId, options) => {
     try{
@@ -20,6 +19,7 @@ const generateQuiz = async (documentId, options) => {
             documentId,
             ...options,
         })
+        return response.data;
     }  catch(error){
         throw error.response?.data || {message : "failed to generate quizz"};
     }

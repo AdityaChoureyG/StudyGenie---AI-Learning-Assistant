@@ -1,4 +1,5 @@
-import React, {createContext, useContext, useState, useEffect} from "react";
+/* eslint-disable react-refresh/only-export-components */
+import React, {createContext, useContext, useState, useEffect, useCallback} from "react";
 
 const AuthContext = createContext();
 
@@ -16,11 +17,7 @@ export const AuthProvider = ({children}) => {
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    useEffect(() => {
-        checkAuthStatus();
-    }, []);
-
-    const checkAuthStatus = async () => {
+    const checkAuthStatus = useCallback(async () => {
         try{
             // Make API call to check auth status
             const token = localStorage.getItem("token");
@@ -37,7 +34,11 @@ export const AuthProvider = ({children}) => {
             setLoading(false);
         }
 
-    }
+    }, []);
+
+    useEffect(() => {
+        checkAuthStatus();
+    }, [checkAuthStatus]);
 
     const login = (userData, token) => {
         localStorage.setItem("token", token);
