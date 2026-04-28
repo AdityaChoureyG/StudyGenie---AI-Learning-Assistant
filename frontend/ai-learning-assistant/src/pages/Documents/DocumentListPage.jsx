@@ -28,12 +28,12 @@ const DocumentListPage = () => {
     try{
       const data = await documentService.getDocuments();
       console.log(data);
-      setDocuments(data.data);
+      setDocuments(data?.data || []);
     }
-    catch(error) {
-      toast.error("Failed to fetch documents");
-      console.error(error);
-    }
+    catch(error) {  
+      toast.error(error?.message || "Failed to fetch documents");
+      console.error('Fetch documents error:', error);
+    } 
     finally{
       setLoading(false);
     }
