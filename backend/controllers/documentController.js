@@ -4,7 +4,26 @@ import Quiz from '../models/Quiz.js';
 import { extractTextFromPDF } from '../utils/pdfParser.js';
 import { chunkText } from '../utils/textChunker.js';
 import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const getLocalFilePath = (fileUrl) => {
+    let relativePath = fileUrl;
+
+    try {
+        relativePath = new URL(fileUrl).pathname.replace(/^\//, '');
+    } catch {
+        if (fileUrl.startsWith('/')) {
+            relativePath = fileUrl.replace(/^\//, '');
+        }
+    }
+
+    return path.join(__dirname, '..', relativePath);
+};
 
 // @desc    Upload a document
 // @route   POST /api/documents/upload
@@ -31,7 +50,7 @@ export const uploadDocument = async (req, res, next) => {
         // construct url of the uploaded file
 
         const baseUrl = `http://localhost:${process.env.PORT || 8000}`;
-        const fileUrl = `${baseUrl}/uploads/${req.file.filename}`;
+        const fileUrl = `${baseUrl}/uploads/documents/${req.file.filename}`;
 
         // create document record in database
         const document = await Document.create({
@@ -204,7 +223,7 @@ export const deleteDocument = async (req, res, next) => {
         }
 
         // delete file from filesystem
-        await fs.unlink(document.filePath).catch(()=>{});
+        await fs.unlink(getLocalFilePath(document.filePath)).catch(()=>{});
 
         // delete document
         await document.deleteOne();

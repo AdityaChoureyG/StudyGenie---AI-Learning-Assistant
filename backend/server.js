@@ -16,6 +16,8 @@ import progressRoutes from './routes/progressRoutes.js'
 // ES6 module syntax requires this to get the __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, '..', 'uploads');
+const documentUploadsDir = path.join(uploadsDir, 'documents');
 
 // intialize express app
 const app = express();
@@ -23,11 +25,23 @@ const app = express();
 // connect to database
 connectDB();
 
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    process.env.FRONTEND_URL,
+    'http://localhost:5173',
+].filter(Boolean);
+
 // middleware to handle cors
 app.use(
     cors({
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE"],
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+
+            return callback(new Error(`CORS blocked for origin: ${origin}`));
+        },
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowedHeaders: ["Content-Type", "Authorization"],
         credentials: true,
     })
@@ -37,7 +51,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //static folder for uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(uploadsDir));
+app.get('/uploads/:filename', (req, res) => {
+    res.sendFile(req.params.filename, { root: documentUploadsDir });
+});
 
 // routes
 app.use('/api/auth', authRoutes);
